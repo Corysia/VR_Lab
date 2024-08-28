@@ -127,7 +127,7 @@ public:
 
 	/** Toggles whether to display controllers or hand meshes */
 	UPROPERTY(EditAnywhere, Category="VR|Mesh")
-	bool ShowControllers = false;
+	bool ShowControllers = true;
 
 private:
 	UPROPERTY(EditAnywhere, Category="VR|Input|Context")

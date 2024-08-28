@@ -3,6 +3,7 @@
 - [VR Lab](#vr-lab)
   - [About](#about)
   - [Goals](#goals)
+  - [Current Functionality](#current-functionality)
   - [How to Build for the Meta Quest](#how-to-build-for-the-meta-quest)
     - [Developer Mode](#developer-mode)
     - [Configure for Android](#configure-for-android)
@@ -19,6 +20,21 @@ A simple Unreal Engine 5.4 Virtual Reality Project
 
 - To demonstrate how to configure a Unreal Engine project to run in VR and on the Meta Quest.
 - To experiment with various VR interactions and features.
+
+## Current Functionality
+
+- Forward source is set to the left controller.  (Can be changed to HMD or Right controller in blueprint)
+- Smooth locomotion with the left thumbstick
+- Snap turning with the right thumbstick (smooth turning can be enabled in the blueprint)
+- Crouching moves at a reduced speed
+- Crawling moves at an even further reduced speed
+- Arrows indicate
+  - Red - Controller's local Forward
+  - Green - Controller's local Right
+  - Light blue - Calculated world forward direction based on how the controller is held
+  - Yellow - Calcuated world right direction based on how the controller is held 
+
+![screenshot](images/screenshot.png)
 
 ## How to Build for the Meta Quest
 
