@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2024 Corysia Taware / Shoebox Games.  All rights reserved.
 
 #pragma once
 
@@ -7,11 +7,10 @@
 #include "VRGameModeBase.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class VR_LAB_API AVRGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
 };
