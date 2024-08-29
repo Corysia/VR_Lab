@@ -23,16 +23,18 @@ A simple Unreal Engine 5.4 Virtual Reality Project
 
 ## Current Functionality
 
+- Start in either VR or Desktop mode, depending if a HMD is connected.
 - Forward source is set to the left controller.  (Can be changed to HMD or Right controller in blueprint)
 - Smooth locomotion with the left thumbstick
 - Snap turning with the right thumbstick (smooth turning can be enabled in the blueprint)
+- Jump by pressing down on the left thumbstick
 - Crouching moves at a reduced speed
 - Crawling moves at an even further reduced speed
 - Arrows indicate
   - Red - Controller's local Forward
   - Green - Controller's local Right
   - Light blue - Calculated world forward direction based on how the controller is held
-  - Yellow - Calcuated world right direction based on how the controller is held 
+  - Yellow - Calculated world right direction based on how the controller is held 
 
 ![screenshot](images/screenshot.png)
 
