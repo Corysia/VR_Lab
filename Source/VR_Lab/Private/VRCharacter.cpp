@@ -35,8 +35,10 @@ AVRCharacter::AVRCharacter()
     RightControllerVisualization = CreateDefaultSubobject<UXRDeviceVisualizationComponent>("Right Controller Visualization");
     RightControllerVisualization->SetupAttachment(RightMotionController);
 
-    UWidgetInteractionComponent *LeftWidgetInteractionComponent = CreateDefaultSubobject<UWidgetInteractionComponent>("Left Widget Interaction");
-    UWidgetInteractionComponent *RightWidgetInteractionComponent = CreateDefaultSubobject<UWidgetInteractionComponent>("Right Widget Interaction");
+    UWidgetInteractionComponent* LeftWidgetInteractionComponent = CreateDefaultSubobject<
+        UWidgetInteractionComponent>("Left Widget Interaction");
+    UWidgetInteractionComponent* RightWidgetInteractionComponent = CreateDefaultSubobject<
+        UWidgetInteractionComponent>("Right Widget Interaction");
 
     // Attach all the objects to their locations for a VR Character
     VROrigin->SetupAttachment(GetRootComponent());
@@ -122,15 +124,19 @@ void AVRCharacter::BeginPlay()
     LeftHandRightGoArrow->SetHiddenInGame(false);
 
     UE_LOG(LogVRCharacter, Warning, TEXT("Left Controller Name: %s"), *LeftMotionController->GetName());
-    UE_LOG(LogVRCharacter, Warning, TEXT("Left Controller Motion Source: %s"), *LeftMotionController->GetTrackingMotionSource().ToString());
+    UE_LOG(LogVRCharacter,
+           Warning,
+           TEXT("Left Controller Motion Source: %s"),
+           *LeftMotionController->GetTrackingMotionSource().ToString());
     UE_LOG(LogVRCharacter, Warning, TEXT("Left Controller Full Name: %s"), *LeftMotionController->GetFullName());
     UE_LOG(LogVRCharacter, Warning, TEXT("Left Visualization Name: %s"), *LeftControllerVisualization->GetName());
     UE_LOG(LogVRCharacter, Warning, TEXT("Left Visualization Full Name: %s"), *LeftControllerVisualization->GetFullName());
 
     // Add Input Mapping Context
-    if (const APlayerController *PlayerController = Cast<APlayerController>(Controller))
+    if (const APlayerController* PlayerController = Cast<APlayerController>(Controller))
     {
-        if (UEnhancedInputLocalPlayerSubsystem *Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+        if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+            UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
         {
             Subsystem->AddMappingContext(DefaultMappingContext, 0);
         }
@@ -148,7 +154,9 @@ void AVRCharacter::BeginPlay()
 
     UE_LOG(LogVRCharacter, Warning, TEXT("HMD Activated: %s"), *UHeadMountedDisplayFunctionLibrary::GetHMDDeviceName().ToString());
     FXRMotionControllerData MotionControllerData;
-    UHeadMountedDisplayFunctionLibrary::GetMotionControllerData(GetWorld(), LeftMotionController->GetTrackingSource(), MotionControllerData);
+    UHeadMountedDisplayFunctionLibrary::GetMotionControllerData(GetWorld(),
+                                                                LeftMotionController->GetTrackingSource(),
+                                                                MotionControllerData);
     UE_LOG(LogVRCharacter, Warning, TEXT("Left Controller Device Name: %s"), *MotionControllerData.DeviceName.ToString());
 
     // Set the tracking origin
@@ -191,9 +199,9 @@ void AVRCharacter::Tick(float DeltaTime)
 
     LeftHandForwardArrow->SetWorldRotation(LeftMotionController->GetForwardVector().Rotation());
     FRotator LeftHandForwardGoArrowRotator = (LeftMotionController->GetForwardVector().GetSafeNormal() -
-                                                 LeftMotionController->GetUpVector().GetSafeNormal())
-                                             .GetSafeNormal()
-                                             .Rotation();
+                                              LeftMotionController->GetUpVector().GetSafeNormal())
+       .GetSafeNormal()
+       .Rotation();
     LeftHandForwardGoArrowRotator.Pitch = 0;
     LeftHandForwardGoArrowRotator.Roll = 0;
     LeftHandForwardGoArrow->SetWorldRotation(LeftHandForwardGoArrowRotator);
@@ -215,10 +223,10 @@ void AVRCharacter::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
-void AVRCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
+void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
-    UEnhancedInputComponent *EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+    UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
     EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ThisClass::PerformJump);
     EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &ThisClass::ToggleCrouch);
     EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
@@ -226,7 +234,7 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputCompone
     EnhancedInputComponent->BindAction(SnapTurnAction, ETriggerEvent::Triggered, this, &ThisClass::SnapTurn);
 }
 
-void AVRCharacter::SmoothTurn(const FInputActionValue &Value)
+void AVRCharacter::SmoothTurn(const FInputActionValue& Value)
 {
     if (!EnableSmoothRotation)
     {
@@ -237,7 +245,7 @@ void AVRCharacter::SmoothTurn(const FInputActionValue &Value)
     AddControllerYawInput(SmoothRotationRate * AxisValue * GetWorld()->GetDeltaSeconds());
 }
 
-void AVRCharacter::SnapTurn(const FInputActionValue &Value)
+void AVRCharacter::SnapTurn(const FInputActionValue& Value)
 {
     if (EnableSmoothRotation)
     {
@@ -254,7 +262,7 @@ void AVRCharacter::SnapTurn(const FInputActionValue &Value)
     }
 }
 
-void AVRCharacter::ToggleCrouch(const FInputActionValue &Value)
+void AVRCharacter::ToggleCrouch(const FInputActionValue& Value)
 {
     const float AxisValue = Value.Get<FVector2D>().Y;
     if (!SeatedVR || AllowCrouchToggle)
@@ -293,7 +301,7 @@ void AVRCharacter::ToggleCrouch(const FInputActionValue &Value)
     }
 }
 
-void AVRCharacter::PerformJump(const FInputActionValue &Value)
+void AVRCharacter::PerformJump(const FInputActionValue& Value)
 {
     GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, TEXT("Jump!"));
     if (CurrentPose == EPose::Standing || CurrentPose == EPose::Crouching)
@@ -358,7 +366,7 @@ void AVRCharacter::UpdateCapsuleHeight()
 }
 
 /** Move the character in the direction of the input */
-void AVRCharacter::Move(const FInputActionValue &Value)
+void AVRCharacter::Move(const FInputActionValue& Value)
 {
     const FVector2D InputAxisVector = Value.Get<FVector2D>();
 
@@ -367,29 +375,31 @@ void AVRCharacter::Move(const FInputActionValue &Value)
     bool bOculus = true; // TODO: Make this a variable
     switch (ForwardSource)
     {
-    case EForwardSource::LeftController:
-        // Adjust the forward vector to match the controller's rotation
-        if (bOculus)
-        {
+        case EForwardSource::LeftController:
+            // Adjust the forward vector to match the controller's rotation
+            if (bOculus)
+            {
+                // Additional adjustment of 45 degrees for the Oculus Touch controllers
+                ForwardRotator = (LeftMotionController->GetForwardVector().GetSafeNormal() - LeftMotionController->GetUpVector().
+                                  GetSafeNormal()).GetSafeNormal().Rotation();
+                RightRotator = LeftMotionController->GetRightVector().Rotation();
+            }
+            else
+            {
+                ForwardRotator = LeftMotionController->GetForwardVector().Rotation();
+                RightRotator = LeftMotionController->GetRightVector().Rotation();
+            }
+            break;
+        case EForwardSource::RightController:
+            // Adjust the forward vector to match the controller's rotation
             // Additional adjustment of 45 degrees for the Oculus Touch controllers
-            ForwardRotator = (LeftMotionController->GetForwardVector().GetSafeNormal() - LeftMotionController->GetUpVector().GetSafeNormal()).GetSafeNormal().Rotation();
-            RightRotator = LeftMotionController->GetRightVector().Rotation();
-        }
-        else
-        {
-            ForwardRotator = LeftMotionController->GetForwardVector().Rotation();
-            RightRotator = LeftMotionController->GetRightVector().Rotation();
-        }
-        break;
-    case EForwardSource::RightController:
-        // Adjust the forward vector to match the controller's rotation
-        // Additional adjustment of 45 degrees for the Oculus Touch controllers
-        ForwardRotator = (RightMotionController->GetForwardVector().GetSafeNormal() - RightMotionController->GetUpVector().GetSafeNormal()).GetSafeNormal().Rotation();
-        RightRotator = RightMotionController->GetRightVector().Rotation();
-        break;
-    default: // HMD
-        ForwardRotator = Camera->GetForwardVector().Rotation();
-        RightRotator = Camera->GetRightVector().Rotation();
+            ForwardRotator = (RightMotionController->GetForwardVector().GetSafeNormal() - RightMotionController->GetUpVector().
+                              GetSafeNormal()).GetSafeNormal().Rotation();
+            RightRotator = RightMotionController->GetRightVector().Rotation();
+            break;
+        default: // HMD
+            ForwardRotator = Camera->GetForwardVector().Rotation();
+            RightRotator = Camera->GetRightVector().Rotation();
     }
     ForwardRotator.Pitch = 0;
     ForwardRotator.Roll = 0;

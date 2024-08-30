@@ -12,5 +12,5 @@
 UCLASS()
 class VR_LAB_API AVRGameModeBase : public AGameModeBase
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
