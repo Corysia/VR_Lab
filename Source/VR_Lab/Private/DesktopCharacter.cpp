@@ -55,11 +55,13 @@ ADesktopCharacter::ADesktopCharacter()
     // Create a follow camera
     FollowCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera");
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+
     // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
     FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-    // Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character)
-    // are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+    FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>("FirstPersonCamera");
+    FirstPersonCamera->SetupAttachment(GetMesh(), FName("head"));
+    FirstPersonCamera->bUsePawnControlRotation = true;
 }
 
 /**
@@ -72,6 +74,9 @@ void ADesktopCharacter::BeginPlay()
 {
     // Call the base class
     Super::BeginPlay();
+
+    // Note that the camera is positioned in the blueprint and not in the code
+    FirstPersonCamera->Deactivate(); // Always start in 3rd person
 
     // Add input mapping context
     // The input mapping context is used to determine which input mapping set to use
@@ -130,15 +135,19 @@ void ADesktopCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
         // Moving
         // The moving action is bound to the W, A, S, and D keys.
-        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ADesktopCharacter::Move);
+        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
 
         // Looking
         // The looking action is bound to the mouse.
-        EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADesktopCharacter::Look);
+        EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
 
         // Zooming
         // The zooming action is bound to the mouse wheel.
-        EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &ADesktopCharacter::BoomZoom);
+        EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &ThisClass::BoomZoom);
+
+        // Perspective
+        // The perspective action is bound to the 'p' key by default.
+        EnhancedInputComponent->BindAction(PerspectiveAction, ETriggerEvent::Triggered, this, &ThisClass::TogglePerspective);
     }
     else
     {
@@ -232,4 +241,83 @@ void ADesktopCharacter::BoomZoom(const FInputActionValue& Value)
     {
         CameraBoom->TargetArmLength = CameraBoomMaxLength;
     }
+}
+
+/**
+ * Checks if the character is currently in first person perspective.
+ *
+ * @return true if the character is in first person, false otherwise
+ */
+bool ADesktopCharacter::IsInFirstPerson() const
+{
+    // Check if the first person camera is active
+    return FirstPersonCamera->IsActive();
+}
+
+/**
+ * Toggles the character's perspective between first person and third person.
+ *
+ * If the character is in first person, this function will switch to third person.
+ * If the character is in third person, this function will switch to first person.
+ *
+ * This function is called on the client, and it will call the server function
+ * Server_TogglePerspective_Implementation() to perform the actual toggling.
+ */
+void ADesktopCharacter::TogglePerspective()
+{
+    if (!HasAuthority())
+    {
+        // If we are on the client, we need to call the server function
+        // to perform the actual toggling
+        UE_LOG(LogDesktopCharacter, Verbose, TEXT("Client_TogglePerspective"))
+        Server_TogglePerspective();
+    }
+    else
+    {
+        // If we are on the server, we can perform the actual toggling here
+        // If we are in first person, switch to third person
+        if (IsInFirstPerson())
+        {
+            UE_LOG(LogDesktopCharacter, Verbose, TEXT("Switching to third person"))
+            FollowCamera->Activate();
+            FirstPersonCamera->Deactivate();
+            bUseControllerRotationYaw = false;
+            GetCharacterMovement()->bOrientRotationToMovement = true;
+        }
+        else // If we are in third person, switch to first person
+        {
+            UE_LOG(LogDesktopCharacter, Verbose, TEXT("Switching to first person"))
+            FollowCamera->Deactivate();
+            FirstPersonCamera->Activate();
+            GetController()->SetControlRotation(GetActorRotation()); // re-orient the camera to the direction the character is facing
+            bUseControllerRotationYaw = true;
+            GetCharacterMovement()->bOrientRotationToMovement = false;
+        }
+    }
+}
+
+/**
+ * Called on the server to toggle the character's perspective between first person and third person.
+ *
+ * This function is called by the client when the player presses the toggle perspective button.
+ * It will call the TogglePerspective() function, which will actually perform the toggling.
+ */
+void ADesktopCharacter::Server_TogglePerspective_Implementation()
+{
+    UE_LOG(LogDesktopCharacter, Verbose, TEXT("Server_TogglePerspective_Implementation"));
+    TogglePerspective();
+}
+
+/**
+ * Validation function for the Server_TogglePerspective_Implementation() function.
+ *
+ * This function is called before the Server_TogglePerspective_Implementation() function is called.
+ * It is used to validate the parameters of the function, and to check if the function should be called.
+ *
+ * @return true if the function should be called, false otherwise
+ */
+bool ADesktopCharacter::Server_TogglePerspective_Validate()
+{
+    UE_LOG(LogDesktopCharacter, Verbose, TEXT("Server_TogglePerspective_Validate"));
+    return true;
 }

@@ -40,9 +40,17 @@ class ADesktopCharacter : public ACharacter
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
     UCameraComponent* FollowCamera;
 
+    /** Follow camera */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+    UCameraComponent* FirstPersonCamera;
+
     /** Zoom Input Action */
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
     UInputAction* ZoomAction;
+
+    /** Perspective Toggle Action */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+    UInputAction* PerspectiveAction;
 
     /** MappingContext */
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -72,6 +80,12 @@ protected:
 
     /** called for camera zooming */
     void BoomZoom(const FInputActionValue& Value);
+
+    bool IsInFirstPerson() const;
+    void TogglePerspective();
+
+    UFUNCTION(Server, Reliable, WithValidation)
+    void Server_TogglePerspective();
 
 protected:
     // APawn interface
