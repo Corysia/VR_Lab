@@ -1,6 +1,6 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright 2024 Corysia Taware / Shoebox Games.  All rights reserved.
 
-#include "TP_ThirdPersonCharacter.h"
+#include "DesktopCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
@@ -11,10 +11,10 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 
-DEFINE_LOG_CATEGORY(LogTemplateCharacter);
+DEFINE_LOG_CATEGORY(LogDesktopCharacter);
 
 //////////////////////////////////////////////////////////////////////////
-// ATP_ThirdPersonCharacter
+// ADesktopCharacter
 
 /**
  * Sets up the character's properties and components.
@@ -23,7 +23,7 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
  * It sets up the input bindings for the character, the character's size and collision properties,
  * the character's movement properties, and the camera boom that follows the character.
  */
-ATP_ThirdPersonCharacter::ATP_ThirdPersonCharacter()
+ADesktopCharacter::ADesktopCharacter()
 {
     // Set size for collision capsule
     GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -34,7 +34,7 @@ ATP_ThirdPersonCharacter::ATP_ThirdPersonCharacter()
     bUseControllerRotationRoll = false;
 
     // Configure character movement
-    GetCharacterMovement()->bOrientRotationToMovement = true;            // Character moves in the direction of input...	
+    GetCharacterMovement()->bOrientRotationToMovement = true;            // Character moves in the direction of input...
     GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
 
     // Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
@@ -47,18 +47,18 @@ ATP_ThirdPersonCharacter::ATP_ThirdPersonCharacter()
     GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
     // Create a camera boom (pulls in towards the player if there is a collision)
-    CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+    CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
     CameraBoom->SetupAttachment(RootComponent);
-    CameraBoom->TargetArmLength = CameraBoomMaxLength / 2.0f; // The camera follows at this distance behind the character	
+    CameraBoom->TargetArmLength = CameraBoomMaxLength / 2.0f; // The camera follows at this distance behind the character
     CameraBoom->bUsePawnControlRotation = true;               // Rotate the arm based on the controller
 
     // Create a follow camera
-    FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+    FollowCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera");
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
     // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
     FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-    // Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
+    // Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character)
     // are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
@@ -68,9 +68,9 @@ ATP_ThirdPersonCharacter::ATP_ThirdPersonCharacter()
  * This function is called when the game starts or when the character is spawned.
  * It sets up the input bindings for the character.
  */
-void ATP_ThirdPersonCharacter::BeginPlay()
+void ADesktopCharacter::BeginPlay()
 {
-    // Call the base class  
+    // Call the base class
     Super::BeginPlay();
 
     // Add input mapping context
@@ -99,7 +99,7 @@ void ATP_ThirdPersonCharacter::BeginPlay()
  *
  * @param PlayerInputComponent The input component to set up.
  */
-void ATP_ThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ADesktopCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     // Add Input Mapping Context
     // The mapping context is used to determine which input mapping set to use
@@ -130,21 +130,21 @@ void ATP_ThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
         // Moving
         // The moving action is bound to the W, A, S, and D keys.
-        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATP_ThirdPersonCharacter::Move);
+        EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ADesktopCharacter::Move);
 
         // Looking
         // The looking action is bound to the mouse.
-        EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATP_ThirdPersonCharacter::Look);
+        EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADesktopCharacter::Look);
 
         // Zooming
         // The zooming action is bound to the mouse wheel.
-        EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &ATP_ThirdPersonCharacter::BoomZoom);
+        EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &ADesktopCharacter::BoomZoom);
     }
     else
     {
         // If the input component is not an enhanced input component, log an error
         // message.
-        UE_LOG(LogTemplateCharacter,
+        UE_LOG(LogDesktopCharacter,
                Error,
                TEXT(
                    "'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."
@@ -158,7 +158,7 @@ void ATP_ThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* Player
  *
  * @param Value The value from the input action, which is a Vector2D that will be used to control the movement of the player character.
  */
-void ATP_ThirdPersonCharacter::Move(const FInputActionValue& Value)
+void ADesktopCharacter::Move(const FInputActionValue& Value)
 {
     // input is a Vector2D
     const FVector2D MovementVector = Value.Get<FVector2D>();
@@ -197,7 +197,7 @@ void ATP_ThirdPersonCharacter::Move(const FInputActionValue& Value)
  *
  * @param Value The value from the input action, which is a Vector2D that will be used to control the yaw and pitch of the player character.
  */
-void ATP_ThirdPersonCharacter::Look(const FInputActionValue& Value)
+void ADesktopCharacter::Look(const FInputActionValue& Value)
 {
     // input is a Vector2D
     const FVector2D LookAxisVector = Value.Get<FVector2D>();
@@ -218,7 +218,7 @@ void ATP_ThirdPersonCharacter::Look(const FInputActionValue& Value)
  * @param Value The value from the input action, which is a float that will be used to zoom the camera.
  */
 // ReSharper disable once CppMemberFunctionMayBeConst
-void ATP_ThirdPersonCharacter::BoomZoom(const FInputActionValue& Value)
+void ADesktopCharacter::BoomZoom(const FInputActionValue& Value)
 {
     // Increase the arm length based on the input value
     CameraBoom->TargetArmLength += Value.Get<float>() * CameraBoomZoomSpeed;

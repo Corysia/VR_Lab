@@ -1,11 +1,11 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright 2024 Corysia Taware / Shoebox Games.  All rights reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
-#include "TP_ThirdPersonCharacter.generated.h"
+#include "DesktopCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -13,10 +13,10 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 
-DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogDesktopCharacter, Log, All);
 
-UCLASS(config=Game)
-class ATP_ThirdPersonCharacter : public ACharacter
+UCLASS(config = Game)
+class ADesktopCharacter : public ACharacter
 {
     GENERATED_BODY()
 
@@ -61,7 +61,7 @@ class ATP_ThirdPersonCharacter : public ACharacter
     UInputAction* LookAction;
 
 public:
-    ATP_ThirdPersonCharacter();
+    ADesktopCharacter();
 
 protected:
     /** Called for movement input */
