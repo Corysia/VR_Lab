@@ -23,6 +23,7 @@ A simple Unreal Engine 5.4 Virtual Reality Project
 
 ## Current Functionality
 
+### Virtual Reality
 - Start in either VR or Desktop mode, depending if a HMD is connected.
 - Forward source is set to the left controller.  (Can be changed to HMD or Right controller in blueprint)
 - Smooth locomotion with the left thumbstick
@@ -35,6 +36,12 @@ A simple Unreal Engine 5.4 Virtual Reality Project
   - Green - Controller's local Right
   - Light blue - Calculated world forward direction based on how the controller is held
   - Yellow - Calculated world right direction based on how the controller is held 
+
+### Desktop
+- WASD to move
+- Space to jump
+- Move camera with the mouse
+- Mouse wheel to zoom camera
 
 ![screenshot](images/screenshot.png)
 

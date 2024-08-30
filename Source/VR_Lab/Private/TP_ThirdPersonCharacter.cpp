@@ -42,7 +42,7 @@ ATP_ThirdPersonCharacter::ATP_ThirdPersonCharacter()
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
+	CameraBoom->TargetArmLength = CameraBoomMaxLength / 2.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
 	// Create a follow camera
@@ -86,6 +86,9 @@ void ATP_ThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATP_ThirdPersonCharacter::Look);
+		
+		// Zooming
+        EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &ATP_ThirdPersonCharacter::BoomZoom);
 	}
 	else
 	{
@@ -127,4 +130,19 @@ void ATP_ThirdPersonCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+/** Zooms the camera in and out */
+// ReSharper disable once CppMemberFunctionMayBeConst
+void ATP_ThirdPersonCharacter::BoomZoom(const FInputActionValue& Value)
+{
+    CameraBoom->TargetArmLength += Value.Get<float>() * CameraBoomZoomSpeed;
+    if (CameraBoom->TargetArmLength < CameraBoomMinLength)
+    {
+        CameraBoom->TargetArmLength = CameraBoomMinLength;
+    }
+    else if (CameraBoom->TargetArmLength > CameraBoomMaxLength)
+    {
+        CameraBoom->TargetArmLength = CameraBoomMaxLength;
+    }
 }
