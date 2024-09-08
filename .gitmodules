@@ -1,0 +1,6 @@
+[submodule "Plugins/save-all-button"]
+	path = Plugins/save-all-button
+	url = http://github.com/corysia/save-all-button
+[submodule "Plugins/UBIKSolver"]
+	path = Plugins/UBIKSolver
+	url = http://github.com/kjduling/UBIKSolver
