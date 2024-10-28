@@ -6,6 +6,7 @@
   - [Current Functionality](#current-functionality)
     - [Virtual Reality](#virtual-reality)
     - [Desktop](#desktop)
+  - [Installing Android Studio](#installing-android-studio)
   - [How to Build for the Meta Quest](#how-to-build-for-the-meta-quest)
     - [Developer Mode](#developer-mode)
     - [Configure for Android](#configure-for-android)
@@ -54,6 +55,34 @@ A simple Unreal Engine 5.4 Virtual Reality Project
 |First Person|Third Person|
 |----|---|
 |![desktop_screenshot](images/1st_screenshot.png)|![desktop_screenshot](images/3rd_screenshot.png)|
+
+---
+
+## Installing Android Studio
+
+For Unreal 5.4.4, you'll need `Android Studio Flamingo | 2022.2.1 Patch 2`.  You can download it from the [Android Studio Archives](https://developer.android.com/studio/archive).
+
+Once it is installed, you'll need to go in to the Android SDK manager and install the latest command-line tools.
+
+| Android Studio Spash Screen             | Command Line Tools|
+|----------------------------------------|---
+| ![sdk manager](images/sdk-manager.png) |![cli-tools](images/cli-tools.png)
+
+Finally, you'll need to cd in to your Unreal Engine installation folder, down in to `Engine\Extras\Android` and run the `SetupAndroid.bat` script.
+
+![setup_android](images/setup-android.png)
+
+To verify that your installation is correct, look at the new Environment Variables the script creates.
+
+| Edit System Variables | Bring up Environment Variables | Review these four variables |
+|-----------------------|--------------------------------|-----------------------------|
+| ![env_vars](images/env-vars-1.png) | ![env_vars](images/env-vars-2.png) | ![env_vars](images/env-vars-3.png) 
+
+If your values don't look similar to the ones above, there's something wrong with your installation.
+
+**NOTE:** Be sure to shut down `Unreal` **_and_** the `Epic Game Launcher` before moving on to the next step.
+
+---
 
 ## How to Build for the Meta Quest
 
