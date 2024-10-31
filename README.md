@@ -96,21 +96,16 @@ This is my recommended way for building and deploying to a Quest device.  There 
 
 There is an option in Settings in your Quest or on the Phone app to put your Quest in to developer mode.  This enables you to install external APKs.
 
-### Configure for Android
+### Configure  and Package for Android
 
 ---
 
 Go to `Project Settings | Platforms | Android` and press the `Configure Now` button if necessary.
 
-![Configure Now Button](images/configure_android.png)
+| Configure for Android | Either ASTC or ETC2                             |
+|-----------------------|-------------------------------------------------|
+| ![Configure Now Button](images/configure_android.png) | ![Package the APK](images/package_project.png)  |
 
-### Package for Android
-
----
-
-Either ASTC or ETC2 is fine.
-
-![Package the APK](images/package_project.png)
 
 You'll be asked to select a directory to output to.  I usually create a Build folder.
 
