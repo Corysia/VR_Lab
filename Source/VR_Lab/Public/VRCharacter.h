@@ -168,12 +168,6 @@ private:
 
     TObjectPtr<UXRDeviceVisualizationComponent> RightControllerVisualization;
     TObjectPtr<UXRDeviceVisualizationComponent> LeftControllerVisualization;
-    TObjectPtr<UArrowComponent> LeftHandForwardArrow;
-    TObjectPtr<UArrowComponent> LeftHandForwardGoArrow;
-    TObjectPtr<UArrowComponent> LeftHandRightGoArrow;
-    TObjectPtr<UArrowComponent> LeftHandRightArrow;
-    TObjectPtr<UArrowComponent> RightHandForwardArrow;
-    TObjectPtr<UArrowComponent> RightHandRightArrow;
 
     bool bCanSnapTurn = false;
     float PreviousCapsuleHeight;
