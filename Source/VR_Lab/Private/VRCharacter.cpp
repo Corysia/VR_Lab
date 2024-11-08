@@ -222,7 +222,6 @@ void AVRCharacter::ToggleCrouch(const FInputActionValue& Value)
 
 void AVRCharacter::PerformJump(const FInputActionValue& Value)
 {
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, TEXT("Jump!"));
     if (CurrentPose == EPose::Standing || CurrentPose == EPose::Crouching)
     {
         Jump();
@@ -264,22 +263,16 @@ void AVRCharacter::UpdateCapsuleHeight()
     if (NewCapsuleHalfHeight < CrawlHeight)
     {
         GetCharacterMovement()->MaxWalkSpeed = CrawlSpeed;
-        // GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,
-        //                                  FString::Printf(TEXT("Crawling %f"), NewCapsuleHalfHeight));
         CurrentPose = EPose::Crawling;
     }
     else if (NewCapsuleHalfHeight < CrouchHeight)
     {
         GetCharacterMovement()->MaxWalkSpeed = CrouchSpeed;
-        // GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow,
-        //                                  FString::Printf(TEXT("Crouching %f"), NewCapsuleHalfHeight));
         CurrentPose = EPose::Crouching;
     }
     else
     {
         GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
-        // GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
-        //                                  FString::Printf(TEXT("Standing %f"), NewCapsuleHalfHeight));
         CurrentPose = EPose::Standing;
     }
 }
