@@ -136,7 +136,7 @@ void AVRCharacter::Tick(float DeltaTime)
 
     if (!SeatedVR)
     {
-        UpdateRoomScaleLocation();
+        UpdateRoomScaleLocation(DeltaTime);
         UpdateCapsuleHeight();
     }
 }
@@ -242,28 +242,22 @@ void AVRCharacter::GrabAxisRight(const float AxisValue) const
  * Updates the actor's location by moving it by the difference between the camera and capsule positions.
  * This is used to update the room scale location.
  */
-void AVRCharacter::UpdateRoomScaleLocation()
+void AVRCharacter::UpdateRoomScaleLocation(const float DeltaTime)
 {
     // Calculate the difference between the camera and capsule locations
-    FVector DeltaLocation = Camera->GetComponentLocation() - GetCapsuleComponent()->GetComponentLocation();
+    Displacement = Camera->GetComponentLocation() - GetCapsuleComponent()->GetComponentLocation();
 
     // Ensure the Z component is zero to prevent movement up and down
-    DeltaLocation.Z = .0f;
+    Displacement.Z = .0f;
+
+    // Calculate the velocity and acceleration
+    const FVector HMDVelocity = Displacement / DeltaTime;
+    HMDAcceleration = (HMDVelocity - LastHMDVelocity) / DeltaTime;
+    LastHMDVelocity = HMDVelocity;
 
     // Move the actor and the VR origin by the delta location
-    AddActorWorldOffset(DeltaLocation, false, nullptr, ETeleportType::TeleportPhysics);
-    VROrigin->AddWorldOffset(-DeltaLocation, false, nullptr, ETeleportType::TeleportPhysics);
-
-    // Update movement based on the camera's velocity
-    FVector Velocity = Camera->GetComponentVelocity();
-    Velocity.Z = .0f; // Ensure the Z component is zero to prevent movement up and down
-
-    // Calculate the speed and direction of the movement
-    const float Speed = Velocity.Size();
-    const FVector HMDDirection = Velocity.GetSafeNormal();
-
-    // Add the input vector to the movement component
-    GetMovementComponent()->AddInputVector(HMDDirection * Speed);
+    AddActorWorldOffset(Displacement, false, nullptr, ETeleportType::TeleportPhysics);
+    VROrigin->AddWorldOffset(-Displacement, false, nullptr, ETeleportType::TeleportPhysics);
 }
 
 void AVRCharacter::UpdateCapsuleHeight()

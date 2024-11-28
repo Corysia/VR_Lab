@@ -53,7 +53,7 @@ public:
     void ToggleCrouch(const FInputActionValue& Value);
     void GrabAxisLeft(const float AxisValue) const;
     void GrabAxisRight(const float AxisValue) const;
-    void UpdateRoomScaleLocation();
+    void UpdateRoomScaleLocation(const float Deltatime);
     void UpdateCapsuleHeight();
 
     /** Is this a seated or standing VR experience? */
@@ -171,6 +171,16 @@ private:
 
     bool bCanSnapTurn = false;
     float PreviousCapsuleHeight;
+
+    // The distance the HMD has moved
+    UPROPERTY(BlueprintReadOnly, Category = "VR|Character", meta = (AllowPrivateAccess = "true"))
+    FVector Displacement;
+
+    FVector LastHMDVelocity;
+
+    // The rate of acceleration of the HMD
+    UPROPERTY(BlueprintReadOnly, Category = "VR|Character", meta = (AllowPrivateAccess = "true"))
+    FVector HMDAcceleration;
 
     EPose CurrentPose = EPose::Standing;
 };
