@@ -53,12 +53,75 @@ AVRCharacter::AVRCharacter()
     RightHandMesh = CreateDefaultSubobject<USkeletalMeshComponent>("RightHandMesh");
     RightHandMesh->SetupAttachment(RightMotionController);
 
+    // TODO: Hand visualization should be handled by OpenXR
+    // RightHandMeshSkeleton = ConstructorHelpers::FObjectFinder<USkeletalMesh>(TEXT("SkeletalMesh'/Game/VirtualReality/Mannequin/Character/Mesh/MannequinHand_Right.MannequinHand_Right'")).Object;
+    // if (RightHandMeshSkeleton != nullptr)
+    // {
+    // RightHandMesh->SetSkeletalMesh(RightHandMeshSkeleton);
+    // }
+    // RightHandMesh->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+
+    // LeftHandMeshSkeleton = ConstructorHelpers::FObjectFinder<USkeletalMesh>(TEXT("SkeletalMesh'/Game/VirtualReality/Mannequin/Character/Mesh/MannequinHand_Right.MannequinHand_Right'")).Object;
+    // if (LeftHandMeshSkeleton != nullptr)
+    // {
+    // LeftHandMesh->SetSkeletalMesh(LeftHandMeshSkeleton);
+    // }
+    // AnimBp = ConstructorHelpers::FObjectFinder<UClass>(TEXT("Class'/Game/_Main/Blueprints/Animations/ABP_VRHandAnimInstance.ABP_VRHandAnimInstance_C'")).Object;
+    // if (AnimBp != nullptr)
+    // {
+    // LeftHandMesh->SetAnimInstanceClass(AnimBp);
+    // RightHandMesh->SetAnimInstanceClass(AnimBp);
+    // }
+
+    // Set up arrows for debugging
+    LeftHandForwardArrow = CreateDefaultSubobject<UArrowComponent>("LeftHandForwardArrow");
+    LeftHandForwardArrow->SetupAttachment(LeftMotionController);
+    LeftHandForwardArrow->SetArrowColor(FColor::Red);
+    LeftHandForwardArrow->SetArrowSize(0.2f);
+    LeftHandForwardArrow->SetArrowLength(40.0f);
+
+    LeftHandForwardGoArrow = CreateDefaultSubobject<UArrowComponent>("LeftHandForwardGoArrow");
+    LeftHandForwardGoArrow->SetupAttachment(LeftMotionController);
+    LeftHandForwardGoArrow->SetArrowColor(FColor::Cyan);
+    LeftHandForwardGoArrow->SetArrowSize(0.2f);
+    LeftHandForwardGoArrow->SetArrowLength(80.0f);
+
+    LeftHandRightGoArrow = CreateDefaultSubobject<UArrowComponent>("LeftHandRightGoArrow");
+    LeftHandRightGoArrow->SetupAttachment(LeftMotionController);
+    LeftHandRightGoArrow->SetArrowColor(FColor::Yellow);
+    LeftHandRightGoArrow->SetArrowSize(0.2f);
+    LeftHandRightGoArrow->SetArrowLength(80.0f);
+
+    LeftHandRightArrow = CreateDefaultSubobject<UArrowComponent>("LeftHandRightArrow");
+    LeftHandRightArrow->SetupAttachment(LeftMotionController);
+    LeftHandRightArrow->SetArrowColor(FColor::Green);
+    LeftHandRightArrow->SetArrowSize(0.2f);
+    LeftHandRightArrow->SetArrowLength(40.0f);
+
+    RightHandForwardArrow = CreateDefaultSubobject<UArrowComponent>("RightHandForwardArrow");
+    RightHandForwardArrow->SetupAttachment(RightMotionController);
+    RightHandForwardArrow->SetArrowColor(FColor::Red);
+    RightHandForwardArrow->SetArrowSize(0.2f);
+    RightHandForwardArrow->SetArrowLength(40.0f);
+
+    RightHandRightArrow = CreateDefaultSubobject<UArrowComponent>("RightHandRightArrow");
+    RightHandRightArrow->SetupAttachment(RightMotionController);
+    RightHandRightArrow->SetArrowColor(FColor::Green);
+    RightHandRightArrow->SetArrowSize(0.2f);
+    RightHandRightArrow->SetArrowLength(40.0f);
 }
 
 // Called when the game starts or when spawned
 void AVRCharacter::BeginPlay()
 {
     Super::BeginPlay();
+    
+    LeftHandRightArrow->SetHiddenInGame(false);
+    LeftHandForwardArrow->SetHiddenInGame(false);
+    RightHandRightArrow->SetHiddenInGame(false);
+    RightHandForwardArrow->SetHiddenInGame(false);
+    LeftHandForwardGoArrow->SetHiddenInGame(false);
+    LeftHandRightGoArrow->SetHiddenInGame(false);
     
     UE_LOG(LogVRCharacter, Warning, TEXT("Left Controller Name: %s"), *LeftMotionController->GetName());
     UE_LOG(LogVRCharacter,
@@ -134,6 +197,24 @@ void AVRCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
+    LeftHandForwardArrow->SetWorldRotation(LeftMotionController->GetForwardVector().Rotation());
+    FRotator LeftHandForwardGoArrowRotator = (LeftMotionController->GetForwardVector().GetSafeNormal() -
+                                              LeftMotionController->GetUpVector().GetSafeNormal())
+       .GetSafeNormal()
+       .Rotation();
+    LeftHandForwardGoArrowRotator.Pitch = 0;
+    LeftHandForwardGoArrowRotator.Roll = 0;
+    LeftHandForwardGoArrow->SetWorldRotation(LeftHandForwardGoArrowRotator);
+
+    FRotator LeftHandRightGoArrowRotator = LeftMotionController->GetRightVector().GetSafeNormal().Rotation();
+    LeftHandRightGoArrowRotator.Pitch = 0;
+    LeftHandRightGoArrowRotator.Roll = 0;
+    LeftHandRightGoArrow->SetWorldRotation(LeftHandRightGoArrowRotator);
+
+    LeftHandRightArrow->SetWorldRotation(LeftMotionController->GetRightVector().Rotation());
+    RightHandRightArrow->SetWorldRotation(RightMotionController->GetRightVector().Rotation());
+    RightHandForwardArrow->SetWorldRotation(RightMotionController->GetForwardVector().Rotation());
+    
     if (!SeatedVR)
     {
         UpdateRoomScaleLocation(DeltaTime);
