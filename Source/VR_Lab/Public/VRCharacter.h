@@ -20,7 +20,7 @@ enum class EPose : uint8
     Standing, Crouching, Crawling
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum class EForwardSource : uint8
 {
     HMD, LeftController, RightController
