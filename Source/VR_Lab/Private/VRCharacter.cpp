@@ -327,6 +327,7 @@ void AVRCharacter::UpdateRoomScaleLocation(const float DeltaTime)
 {
     // Calculate the difference between the camera and capsule locations
     Displacement = Camera->GetComponentLocation() - GetCapsuleComponent()->GetComponentLocation();
+    Direction = FMath::RadiansToDegrees(atan2(Displacement.X, Displacement.Y));
 
     // Ensure the Z component is zero to prevent movement up and down
     Displacement.Z = .0f;
@@ -375,7 +376,8 @@ void AVRCharacter::UpdateCapsuleHeight()
 void AVRCharacter::Move(const FInputActionValue& Value)
 {
     const FVector2D InputAxisVector = Value.Get<FVector2D>();
-
+    Direction = FMath::RadiansToDegrees(atan2(InputAxisVector.X, InputAxisVector.Y));
+    GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::SanitizeFloat(Direction));
     FRotator ForwardRotator;
     FRotator RightRotator;
     bool bOculus = true; // TODO: Make this a variable
@@ -410,7 +412,6 @@ void AVRCharacter::Move(const FInputActionValue& Value)
     ForwardRotator.Pitch = 0;
     ForwardRotator.Roll = 0;
     const FVector ForwardVectorYawOnly = ForwardRotator.Vector().GetSafeNormal();
-    ForwardSourceVector = ForwardVectorYawOnly;
     AddMovementInput(ForwardVectorYawOnly, InputAxisVector.Y);
 
     RightRotator.Pitch = 0;
