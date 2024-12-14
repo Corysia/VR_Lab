@@ -185,6 +185,10 @@ private:
 
     FVector LastHMDVelocity;
 
+    // The forward vector of the HMD or motion controller, depending on ForwardSource
+    UPROPERTY(BlueprintReadOnly, Category = "VR|Character", meta = (AllowPrivateAccess = "true"))
+    FVector ForwardSourceVector;
+
     // The rate of acceleration of the HMD
     UPROPERTY(BlueprintReadOnly, Category = "VR|Character", meta = (AllowPrivateAccess = "true"))
     FVector HMDAcceleration;

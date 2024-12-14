@@ -410,6 +410,7 @@ void AVRCharacter::Move(const FInputActionValue& Value)
     ForwardRotator.Pitch = 0;
     ForwardRotator.Roll = 0;
     const FVector ForwardVectorYawOnly = ForwardRotator.Vector().GetSafeNormal();
+    ForwardSourceVector = ForwardVectorYawOnly;
     AddMovementInput(ForwardVectorYawOnly, InputAxisVector.Y);
 
     RightRotator.Pitch = 0;
